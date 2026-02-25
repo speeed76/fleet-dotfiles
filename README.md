@@ -82,6 +82,30 @@ alias bob='bob-claude'
 export OLLAMA_HOST=http://192.168.0.11:11434
 ```
 
+### tmux (`tmux/tmux.conf`)
+Symlinked to `~/.tmux.conf`. Requires tmux 3.2+. TPM auto-bootstraps.
+
+| Key | Action |
+|---|---|
+| `Ctrl+a` | Prefix (replaces Ctrl+b) |
+| `Prefix + \|` | Split vertical (current dir) |
+| `Prefix + -` | Split horizontal (current dir) |
+| `C-h/j/k/l` | Navigate panes (no prefix — transparent with vim/nvim) |
+| `Prefix + h/j/k/l` | Navigate panes (with prefix) |
+| `Prefix + H/J/K/L` | Resize panes |
+| `Alt+h/l` | Prev/next window |
+| `Prefix + Tab` | Last active window |
+| `Prefix + r` | Reload config |
+| `Prefix + z` | Zoom pane |
+| `Prefix + m` | Toggle mouse |
+| `Prefix + e` | Toggle pane sync |
+| `Prefix + Enter` | Enter copy mode |
+| `v / V / Ctrl+v` | Select / line / rect in copy mode |
+| `y` | Yank to clipboard |
+
+**Theme:** catppuccin mocha — matches vim/nvim.
+**Plugins:** tmux-sensible, tmux-yank, tmux-resurrect (save sessions), tmux-continuum (auto-save every 15 min).
+
 ## Recommended tools to install
 
 | Tool | macOS | Linux |
