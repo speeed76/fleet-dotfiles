@@ -1,0 +1,209 @@
+" ── Fleet Dotfiles — vimrc ─────────────────────────────────────────────────
+" Works on vim 8+ and neovim (loaded via init.vim shim)
+" Repo: https://github.com/speeed76/fleet-dotfiles
+
+" ── Plugin Manager (vim-plug) ────────────────────────────────────────────────
+let s:plug_path = has('nvim')
+      \ ? stdpath('data') . '/site/autoload/plug.vim'
+      \ : expand('~/.vim/autoload/plug.vim')
+
+if empty(glob(s:plug_path))
+  let s:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  silent execute '!curl -fLo ' . s:plug_path . ' --create-dirs ' . s:plug_url
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+let s:plug_dir = has('nvim')
+      \ ? stdpath('data') . '/plugged'
+      \ : expand('~/.vim/plugged')
+
+call plug#begin(s:plug_dir)
+
+" ── Core ─────────────────────────────────────────────────────────────────────
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-sleuth'            " auto-detect indent
+Plug 'jiangmiao/auto-pairs'
+
+" ── Navigation & Search ──────────────────────────────────────────────────────
+Plug 'preservim/nerdtree'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+" ── UI ───────────────────────────────────────────────────────────────────────
+Plug 'itchyny/lightline.vim'
+Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+Plug 'airblade/vim-gitgutter'
+Plug 'machakann/vim-highlightedyank'
+
+" ── Editing ──────────────────────────────────────────────────────────────────
+Plug 'editorconfig/editorconfig-vim'
+Plug 'mbbill/undotree'
+
+call plug#end()
+
+" ── Core Settings ────────────────────────────────────────────────────────────
+set nocompatible
+set encoding=utf-8
+set fileencoding=utf-8
+set hidden                   " switch buffers without saving
+set noswapfile
+set nobackup
+set undofile                 " persistent undo
+let &undodir = expand('~/.vim/undodir')
+silent! call mkdir(&undodir, 'p')
+
+set number
+set relativenumber
+set cursorline
+set signcolumn=yes
+set scrolloff=8
+set sidescrolloff=8
+set wrap
+set linebreak
+set breakindent
+
+set expandtab
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+set smartindent
+
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch
+
+set splitright
+set splitbelow
+set termguicolors
+set laststatus=2
+set noshowmode               " lightline shows mode
+set updatetime=250
+set timeoutlen=500
+set completeopt=menu,menuone,noselect
+
+" ── Colorscheme ──────────────────────────────────────────────────────────────
+silent! colorscheme catppuccin_mocha
+
+" ── Leader ───────────────────────────────────────────────────────────────────
+let mapleader = " "
+let maplocalleader = " "
+
+" ── Key Mappings ─────────────────────────────────────────────────────────────
+" Escape
+inoremap jk <Esc>
+inoremap jj <Esc>
+
+" Clear search highlight
+nnoremap <Esc> :nohlsearch<CR>
+
+" Better window navigation
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Resize windows
+nnoremap <C-Up>    :resize +2<CR>
+nnoremap <C-Down>  :resize -2<CR>
+nnoremap <C-Left>  :vertical resize -2<CR>
+nnoremap <C-Right> :vertical resize +2<CR>
+
+" Move lines up/down
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+" Keep cursor centred when jumping
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+
+" Better indent in visual mode
+vnoremap < <gv
+vnoremap > >gv
+
+" Paste over selection without yanking
+vnoremap p "_dP
+
+" Buffer navigation
+nnoremap <S-h> :bprevious<CR>
+nnoremap <S-l> :bnext<CR>
+nnoremap <leader>bd :bdelete<CR>
+
+" ── Leader Mappings ──────────────────────────────────────────────────────────
+" File
+nnoremap <leader>e  :NERDTreeToggle<CR>
+nnoremap <leader>ef :NERDTreeFind<CR>
+
+" FZF
+nnoremap <leader>ff :Files<CR>
+nnoremap <leader>fg :Rg<CR>
+nnoremap <leader>fb :Buffers<CR>
+nnoremap <leader>fh :History<CR>
+nnoremap <leader>fc :BCommits<CR>
+
+" Git (fugitive)
+nnoremap <leader>gs :Git status<CR>
+nnoremap <leader>ga :Git add %<CR>
+nnoremap <leader>gc :Git commit<CR>
+nnoremap <leader>gp :Git push<CR>
+nnoremap <leader>gd :Gdiffsplit<CR>
+nnoremap <leader>gb :Git blame<CR>
+nnoremap <leader>gl :Git log --oneline<CR>
+
+" Undo tree
+nnoremap <leader>u  :UndotreeToggle<CR>
+
+" Config
+nnoremap <leader>ce :edit $MYVIMRC<CR>
+nnoremap <leader>cr :source $MYVIMRC<CR>
+
+" ── NERDTree ─────────────────────────────────────────────────────────────────
+let g:NERDTreeShowHidden = 1
+let g:NERDTreeMinimalUI = 1
+let g:NERDTreeIgnore = ['\~$', '\.git$', 'node_modules$', '__pycache__$', '\.DS_Store']
+" Close vim if NERDTree is the only window left
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1
+      \ && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+" ── Lightline ────────────────────────────────────────────────────────────────
+let g:lightline = {
+      \ 'colorscheme': 'catppuccin_mocha',
+      \ 'active': {
+      \   'left':  [['mode','paste'],['gitbranch','readonly','filename','modified']],
+      \   'right': [['lineinfo'],['percent'],['fileformat','fileencoding','filetype']]
+      \ },
+      \ 'component_function': { 'gitbranch': 'FugitiveHead' },
+      \ }
+
+" ── FZF ──────────────────────────────────────────────────────────────────────
+let g:fzf_layout = { 'down': '40%' }
+let g:fzf_preview_window = ['right:50%:hidden', 'ctrl-/']
+" Use rg for :Rg if available
+if executable('rg')
+  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git"'
+endif
+
+" ── GitGutter ────────────────────────────────────────────────────────────────
+let g:gitgutter_sign_added    = '▎'
+let g:gitgutter_sign_modified = '▎'
+let g:gitgutter_sign_removed  = '▁'
+
+" ── Highlighted Yank ─────────────────────────────────────────────────────────
+let g:highlightedyank_highlight_duration = 200
+
+" ── Performance (inherited from macbook-pro-i5 section) ─────────────────────
+set synmaxcol=300
+set lazyredraw
+set ttyfast
+
+" ── Filetype specifics ───────────────────────────────────────────────────────
+autocmd FileType markdown,text setlocal spell spelllang=en_us wrap linebreak
+autocmd FileType python setlocal tabstop=4 softtabstop=4 shiftwidth=4
+autocmd BufWritePre * :%s/\s\+$//e    " strip trailing whitespace on save
+" ────────────────────────────────────────────────────────────────────────────
